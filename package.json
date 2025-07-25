@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node index.js",      
+    "dev": "nodemon index.js"      
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,4 @@
     "mongoose": "^7.6.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
-  }
-}
+    "nodemon":
