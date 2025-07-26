@@ -1,34 +1,26 @@
+// server/index.js
 const express = require('express');
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const taskRoutes = require('./routes/taskRoutes');
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
-// Middleware
+// ✅ Enable CORS for the frontend Render domain
+app.use(cors({
+  origin: 'https://taskmaster-frontend-jf3h.onrender.com',
+  methods: ['GET', 'POST', 'DELETE', 'PUT'],
+  credentials: true,
+}));
+
 app.use(express.json());
-
-// Root route for testing server status
-app.get('/', (req, res) => {
-  res.json({ message: '✅ TaskMaster Backend is running!' });
-});
-
-// Task API routes
 app.use('/api/tasks', taskRoutes);
-console.log('📡 Route /api/tasks registered');
 
-// Connect to MongoDB and start server
-mongoose
-  .connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGODB_URI || 'your_mongodb_uri_here')
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`Server running on port ${PORT}`);
     });
   })
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1);
-  });
+  .catch(err => console.error(err));
