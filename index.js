@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 
 // Task API routes
 app.use('/api/tasks', taskRoutes);
+console.log('📡 Route /api/tasks registered');
 
 // Connect to MongoDB and start server
 mongoose

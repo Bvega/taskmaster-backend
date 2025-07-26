@@ -1,38 +1,52 @@
 const express = require('express');
-
 const Task = require('../models/task');
 
 const router = express.Router();
 
-
-router.get('/', (req, res) => {
-  Task.find({})
-    .then(tasks => res.json(tasks))
-    .catch(err => res.status(500).json({ error: err }));
+// GET all tasks
+router.get('/', async (req, res) => {
+  try {
+    const tasks = await Task.find({});
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.post('/add', (req, res) => {
-  const { title } = req.body;
-  const newTask = new Task({ title });
-
-  newTask.save()
-    .then(task => res.json(task))
-    .catch(err => res.json(500, err));
+// POST a new task
+router.post('/', async (req, res) => {
+  try {
+    const { title, description, completed } = req.body;
+    const newTask = new Task({ title, description, completed });
+    const savedTask = await newTask.save();
+    res.status(201).json(savedTask);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-router.delete('/delete/:id', (req, res) => {
-  const id = req.params.id;
-
-  Task.findByIdAndDelete(id)
-    .then(task => res.json(task))
-    .catch(err => res.json(500, err));
+// PUT update task by ID
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.json(updatedTask);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-router.post('/update/:id', (req, res) => {
-  const { done } = req.body;
-  Task.findByIdAndUpdate(req.params.id, { done })
-    .then(task => res.json(task))
-    .catch(err => res.json(500, err));
+// DELETE task by ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedTask = await Task.findByIdAndDelete(req.params.id);
+    res.json(deletedTask);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 module.exports = router;
